@@ -4,7 +4,7 @@ const teamSelect = document.getElementById('teamSelect');
 // Fetch odds and populate team list dynamically
 async function loadTeams() {
   try {
-    const response = await fetch("http://localhost:3001/api/odds");
+    const response = await fetch("https://sports-odds-proxy.onrender.com/api/odds");
     if (!response.ok) throw new Error(`API error: ${response.status}`);
 
     const data = await response.json();
@@ -27,7 +27,7 @@ document.getElementById('fetchOdds').addEventListener('click', async () => {
   const team = teamSelect.value;
 
   try {
-    const response = await fetch("http://localhost:3001/api/odds");
+    const response = await fetch("https://sports-odds-proxy.onrender.com/api/odds");
     if (!response.ok) throw new Error(`API error: ${response.status}`);
 
     const data = await response.json();
