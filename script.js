@@ -2,7 +2,7 @@ const gamesList = document.getElementById("gamesList");
 
 async function fetchGames() {
   try {
-    const response = await fetch("https://proxy-1.onrender.com/api/odds");
+    const response = await fetch("https://sports-odds-proxy-1.onrender.com/api/odds");
     if (!response.ok) throw new Error("Failed to load games");
 
     const data = await response.json();
