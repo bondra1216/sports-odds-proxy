@@ -1,55 +1,45 @@
-const output = document.getElementById('output');
-const teamSelect = document.getElementById('teamSelect');
+const gamesList = document.getElementById("gamesList");
 
-// Fetch odds and populate team list dynamically
-async function loadTeams() {
+async function fetchGames() {
   try {
-    const response = await fetch("https://sports-odds-proxy-1.onrender.com/api/odds");
-    if (!response.ok) throw new Error(`API error: ${response.status}`);
+    const response = await fetch("https://proxy-1.onrender.com/api/odds");
+    if (!response.ok) throw new Error("Failed to load games");
 
     const data = await response.json();
-    const teams = new Set();
+    if (!data.length) {
+      gamesList.innerText = "No games available.";
+      return;
+    }
 
-    data.forEach(game => {
-      teams.add(game.home_team);
-      teams.add(game.away_team);
-    });
+    const html = data.map((game, index) => {
+      return `
+        <div class="game" id="game-${index}">
+          <strong>${game.away_team} @ ${game.home_team}</strong><br>
+          <button onclick="fetchOdds(${index})">Get Odds</button>
+          <div id="odds-${index}"></div>
+        </div>
+      `;
+    }).join("");
 
-    teamSelect.innerHTML = Array.from(teams).sort().map(team =>
-      `<option value="${team}">${team}</option>`
-    ).join('');
+    gamesList.innerHTML = html;
+    window._gamesData = data;
+
   } catch (error) {
-    output.innerText = `Error loading teams: ${error.message}`;
+    gamesList.innerText = "Error loading games: " + error.message;
   }
 }
 
-document.getElementById('fetchOdds').addEventListener('click', async () => {
-  const team = teamSelect.value;
+async function fetchOdds(index) {
+  const game = window._gamesData[index];
+  const outcomes = game.bookmakers?.[0]?.markets?.[0]?.outcomes;
 
-  try {
-    const response = await fetch("https://sports-odds-proxy-1.onrender.com/api/odds");
-    if (!response.ok) throw new Error(`API error: ${response.status}`);
-
-    const data = await response.json();
-
-    const filteredGames = data.filter(game =>
-      game.home_team === team || game.away_team === team
-    );
-
-    if (filteredGames.length) {
-      output.innerHTML = filteredGames.map(game => {
-        const home = game.home_team;
-        const away = game.away_team;
-        const odds = game.bookmakers[0]?.markets[0]?.outcomes || [];
-        return `<p><strong>${away} vs ${home}</strong><br>
-          ${odds.map(o => `${o.name}: ${o.price}`).join('<br>')}</p>`;
-      }).join('');
-    } else {
-      output.innerText = 'No upcoming games found for selected team in the next 24 hours.';
-    }
-  } catch (error) {
-    output.innerText = `Error: ${error.message}`;
+  if (!outcomes?.length) {
+    document.getElementById(`odds-${index}`).innerText = "No odds available.";
+    return;
   }
-});
 
-loadTeams();
+  const oddsText = outcomes.map(o => `${o.name}: ${o.price}`).join("<br>");
+  document.getElementById(`odds-${index}`).innerHTML = oddsText;
+}
+
+fetchGames();

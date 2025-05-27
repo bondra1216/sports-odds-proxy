@@ -3,7 +3,17 @@ body {
   padding: 20px;
 }
 
-#output {
-  margin-top: 20px;
-  white-space: pre-wrap;
+h1 {
+  margin-bottom: 20px;
+}
+
+.game {
+  margin-bottom: 15px;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+}
+
+button {
+  margin-top: 8px;
 }
