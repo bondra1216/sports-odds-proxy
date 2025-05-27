@@ -10,11 +10,13 @@ app.use(cors({
   origin: 'https://bondra1216.github.io'  // replace with your GitHub username
 }));
 
+
 const PORT = process.env.PORT || 3001;
 const API_KEY = process.env.API_KEY;
 
 // Endpoint to fetch odds from The Odds API
 app.get('/api/odds', async (req, res) => {
+  console.log('Received request from frontend...');
   const url = `https://api.the-odds-api.com/v4/sports/baseball_mlb/odds/?regions=us&markets=h2h&bookmakers=draftkings&oddsFormat=american&apiKey=${API_KEY}`;
 
   try {
